@@ -1,4 +1,6 @@
-const { NotImplementedError } = require('../extensions/index.js');
+const {
+  NotImplementedError
+} = require('../extensions/index.js');
 
 /**
  * Create transformed array based on the control sequences that original
@@ -13,9 +15,51 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function transform(arr) {
+  
+  const result = [];
+  let discardPrev = false;
+  
+  for (let i = 0; i < arr.length; i++) {
+    const current = arr[i];
+    const prev = arr[i - 1];
+    const next = arr[i + 1];
+
+    switch (current) {
+      case '--discard-next':
+        discardPrev = false;
+        i++;
+        break;
+
+      case '--discard-prev':
+        if (!discardPrev && prev !== undefined) {
+          result.pop();
+        }
+        discardPrev = false;
+        break;
+
+      case '--double-next':
+        if (next !== undefined) {
+          result.push(next);
+        }
+        discardPrev = false;
+        break;
+
+      case '--double-prev':
+        if (!discardPrev && prev !== undefined) {
+          result.push(prev);
+        }
+        discardPrev = false;
+        break;
+
+      default:
+        result.push(current);
+        discardPrev = false;
+        break;
+    }
+  }
+
+  return result;
 }
 
 module.exports = {
